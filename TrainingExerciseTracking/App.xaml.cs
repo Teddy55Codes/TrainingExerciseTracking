@@ -16,7 +16,15 @@ public partial class App : PrismApplication
     protected override void RegisterTypes(IContainerRegistry containerRegistry)
     {
         containerRegistry.Register<MainWindow>();
+        containerRegistry.RegisterSingleton<IParticipantMovementService, ParticipantMovementService>();
+        containerRegistry.RegisterSingleton<IParticipantActivityGenerator, ParticipantActivityGenerator>();
+        Task.Run(() =>
+        {
+            Container.Resolve<IParticipantActivityGenerator>().Start();
+        });
+
     }
 
     /// <inheritdoc />
+    protected override Window CreateShell() => Container.Resolve<MainWindow>();
 }
