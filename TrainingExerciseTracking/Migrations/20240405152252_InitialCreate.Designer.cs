@@ -11,7 +11,7 @@ using TrainingExerciseTracking.Database;
 namespace TrainingExerciseTracking.Migrations
 {
     [DbContext(typeof(TrainingDbContext))]
-    [Migration("20240405144359_InitialCreate")]
+    [Migration("20240405152252_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -63,6 +63,9 @@ namespace TrainingExerciseTracking.Migrations
                     b.Property<string>("Information")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Number")
+                        .HasColumnType("int");
 
                     b.Property<string>("Rank")
                         .IsRequired()

@@ -61,6 +61,9 @@ namespace TrainingExerciseTracking.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Number")
+                        .HasColumnType("int");
+
                     b.Property<string>("Rank")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
