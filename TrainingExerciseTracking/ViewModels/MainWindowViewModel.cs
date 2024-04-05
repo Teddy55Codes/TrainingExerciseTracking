@@ -31,7 +31,7 @@ public class MainWindowViewModel : BaseViewModel
         _participantMovementService.OnBatchCollected += UpdateParticipants;
     }
 
-    private void UpdateParticipants()
+    private void UpdateParticipants(Movement[] movements)
     {
         var currentMovements = new List<Movement>();
         var i = 0;
@@ -51,12 +51,12 @@ public class MainWindowViewModel : BaseViewModel
         
         for (int j = 0; j < currentMovements.Count; j++)
         {
-            var curr = _extendedPoints.SingleOrDefault(exp => exp.Id == currentMovements[j].Participant.Id);
+            var curr = _extendedPoints.SingleOrDefault(exp => exp.Id == currentMovements[j].Participant.Number);
             if (curr == null)
             {
                 _extendedPoints.Add(new ExtendedPoint()
                 {
-                    Id = currentMovements[j].Participant.Id, 
+                    Id = currentMovements[j].Participant.Number, 
                     Point = new MPoint(currentMovements[j].Longitude, currentMovements[j].Latitude)
                 });
             }

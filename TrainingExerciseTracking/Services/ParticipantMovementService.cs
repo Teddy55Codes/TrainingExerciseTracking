@@ -4,7 +4,7 @@ using TrainingExerciseTracking.Database.Models;
 
 namespace TrainingExerciseTracking.Services;
 
-public delegate void BatchCollected();
+public delegate void BatchCollected(Movement[] movements);
 
 public class ParticipantMovementService : IParticipantMovementService
 {
@@ -25,7 +25,7 @@ public class ParticipantMovementService : IParticipantMovementService
         Movements.Add(movement);
         if (DateTime.Now - _lastBatch > TimeSpan.FromMilliseconds(500))
         {
-            OnBatchCollected?.Invoke();
+            OnBatchCollected?.Invoke(Movements.ToArray());
         }
     }
 }

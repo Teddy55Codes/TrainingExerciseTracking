@@ -29,16 +29,15 @@ public class ParticipantActivityGenerator : IParticipantActivityGenerator
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                var participantId = _random.Next(1, _participants + 1);
+                var participantNumber = _random.Next(1, _participants + 1);
                 _eventAggregator.GetEvent<ParticipantMovementEvent>().Publish(
                     new Movement()
                     {
                         Latitude = _random.NextDouble() * (latitudeEnd - latitudeStart) + latitudeStart,
                         Longitude = _random.NextDouble() * (longitudeEnd - longitudeStart) + longitudeStart,
-                        ParticipantId = participantId,
                         Participant = new Participant()
                         {
-                            Id = participantId,
+                            Number = participantNumber,
                             Country = _countries[_random.Next(_countries.Length)],
                             Rank = _ranks[_random.Next(_ranks.Length)],
                             Information = string.Empty

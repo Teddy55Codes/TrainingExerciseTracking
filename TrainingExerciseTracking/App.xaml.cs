@@ -18,11 +18,12 @@ public partial class App : PrismApplication
         containerRegistry.Register<MainWindow>();
         containerRegistry.RegisterSingleton<IParticipantMovementService, ParticipantMovementService>();
         containerRegistry.RegisterSingleton<IParticipantActivityGenerator, ParticipantActivityGenerator>();
+        containerRegistry.RegisterSingleton<IParticipantMovementRecorder, ParticipantMovementRecorder>();
         Task.Run(() =>
         {
+            Container.Resolve<IParticipantMovementRecorder>();
             Container.Resolve<IParticipantActivityGenerator>().Start();
         });
-
     }
 
     /// <inheritdoc />
