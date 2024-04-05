@@ -42,7 +42,7 @@ namespace TrainingExerciseTracking.Migrations
 
                     b.HasIndex("ParticipantId");
 
-                    b.ToTable("Posts");
+                    b.ToTable("Movements");
                 });
 
             modelBuilder.Entity("TrainingExerciseTracking.Database.Models.Participant", b =>
@@ -67,7 +67,7 @@ namespace TrainingExerciseTracking.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Blogs");
+                    b.ToTable("Participants");
                 });
 
             modelBuilder.Entity("TrainingExerciseTracking.Database.Models.Movement", b =>

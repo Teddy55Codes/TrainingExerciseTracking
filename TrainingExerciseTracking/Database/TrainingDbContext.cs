@@ -5,8 +5,8 @@ namespace TrainingExerciseTracking.Database;
 
 public class TrainingDbContext : DbContext
 {
-    public DbSet<Participant> Blogs { get; set; }
-    public DbSet<Movement> Posts { get; set; }
+    public DbSet<Participant> Participants { get; set; }
+    public DbSet<Movement> Movements { get; set; }
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

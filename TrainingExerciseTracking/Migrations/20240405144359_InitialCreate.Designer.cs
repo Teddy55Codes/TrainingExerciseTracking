@@ -11,7 +11,7 @@ using TrainingExerciseTracking.Database;
 namespace TrainingExerciseTracking.Migrations
 {
     [DbContext(typeof(TrainingDbContext))]
-    [Migration("20240405125338_InitialCreate")]
+    [Migration("20240405144359_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -45,7 +45,7 @@ namespace TrainingExerciseTracking.Migrations
 
                     b.HasIndex("ParticipantId");
 
-                    b.ToTable("Posts");
+                    b.ToTable("Movements");
                 });
 
             modelBuilder.Entity("TrainingExerciseTracking.Database.Models.Participant", b =>
@@ -70,7 +70,7 @@ namespace TrainingExerciseTracking.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Blogs");
+                    b.ToTable("Participants");
                 });
 
             modelBuilder.Entity("TrainingExerciseTracking.Database.Models.Movement", b =>

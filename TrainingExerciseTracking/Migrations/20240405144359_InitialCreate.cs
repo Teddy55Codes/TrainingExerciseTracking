@@ -11,7 +11,7 @@ namespace TrainingExerciseTracking.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Blogs",
+                name: "Participants",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -22,11 +22,11 @@ namespace TrainingExerciseTracking.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Blogs", x => x.Id);
+                    table.PrimaryKey("PK_Participants", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Posts",
+                name: "Movements",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
@@ -37,18 +37,18 @@ namespace TrainingExerciseTracking.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Posts", x => x.Id);
+                    table.PrimaryKey("PK_Movements", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Posts_Blogs_ParticipantId",
+                        name: "FK_Movements_Participants_ParticipantId",
                         column: x => x.ParticipantId,
-                        principalTable: "Blogs",
+                        principalTable: "Participants",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Posts_ParticipantId",
-                table: "Posts",
+                name: "IX_Movements_ParticipantId",
+                table: "Movements",
                 column: "ParticipantId");
         }
 
@@ -56,10 +56,10 @@ namespace TrainingExerciseTracking.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Posts");
+                name: "Movements");
 
             migrationBuilder.DropTable(
-                name: "Blogs");
+                name: "Participants");
         }
     }
 }
