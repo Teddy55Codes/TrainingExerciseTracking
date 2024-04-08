@@ -7,7 +7,7 @@ using TrainingExerciseTracking.Database;
 
 #nullable disable
 
-namespace TrainingExerciseTracking.Migrations
+namespace TrainingExerciseTracking.Database.Migrations
 {
     [DbContext(typeof(TrainingDbContext))]
     partial class TrainingDbContextModelSnapshot : ModelSnapshot

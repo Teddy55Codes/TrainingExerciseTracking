@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace TrainingExerciseTracking.Migrations
+namespace TrainingExerciseTracking.Database.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
