@@ -18,8 +18,25 @@ The database migration will be applied automatically when the application starts
 ![DatabaseEERDiagram](Resources/DatabaseDiagram.png)
 
 ## API
-The api launches on port 5000 and has 2 endpoints
-* /movements
-* /participants
+The api launches on port 5000 and has 2 POST endpoints:
+* /movements\
+    example request body:
+    ```json
+    {
+      "longitude": 7.321437243553244,
+      "latitude": 44.61757413013524,
+      "participantNumber": 1337
+    }
+    ```
+* /participants\
+    example request body:
+    ```json
+    {
+      "number": 1337,
+      "rank": "Normal",
+      "country": "USA",
+      "information": "This is a normal participant."
+    }
+    ```
 
-These endpoints can be used to inject data
+These endpoints can be used to inject data.
