@@ -6,5 +6,5 @@ public class MovementDTO
 {
     public double Longitude { get; set; }
     public double Latitude { get; set; }
-    public virtual int ParticipantNumber { get; set; }
+    public int ParticipantNumber { get; set; }
 }
