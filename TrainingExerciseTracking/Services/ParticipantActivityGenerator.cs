@@ -8,7 +8,7 @@ public class ParticipantActivityGenerator : IParticipantActivityGenerator
 {
     private readonly IEventAggregator _eventAggregator;
     private readonly Random _random;
-    private TimeSpan publishDelay = TimeSpan.FromMilliseconds(100);
+    private TimeSpan publishDelay = TimeSpan.FromMilliseconds(500);
     private int _participants = 10;
     private string[] _countries = ["Germany", "France"];
     private string[] _ranks = ["Normal", "Elevated"];

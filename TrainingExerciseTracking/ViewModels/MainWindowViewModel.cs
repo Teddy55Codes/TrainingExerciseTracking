@@ -46,7 +46,7 @@ public class MainWindowViewModel : BaseViewModel
                 {
                     currentMovements.Add(movement);
                 }
-            });
+            }).Wait();
             i++;
         }
         if (currentMovements.Count == 0) return;

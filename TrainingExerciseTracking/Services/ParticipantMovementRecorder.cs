@@ -16,10 +16,11 @@ public class ParticipantMovementRecorder : IParticipantMovementRecorder
     private void SaveBadgeToDB(Movement[] movements)
     {
         using var db = new TrainingDbContext();
-        var participantNumbers = movements.Select(m => m.Participant.Number);
+        var actualMovements = movements.Where(m => m.Id == 0);
+        var participantNumbers = actualMovements.Select(m => m.Participant.Number);
         var participants = db.Participants.Where(p => participantNumbers.Contains(p.Number)).ToList();
         
-        foreach (var movement in movements)
+        foreach (var movement in actualMovements)
         {
             var participantId = participants.FirstOrDefault(p => p.Number == movement.Participant.Number)?.Id;
             if (participantId != null)
@@ -28,7 +29,7 @@ public class ParticipantMovementRecorder : IParticipantMovementRecorder
                 movement.Participant = null;
             }
         }
-        db.Movements.AddRange(movements);
+        db.Movements.AddRange(actualMovements);
         db.SaveChanges();
     }
 }

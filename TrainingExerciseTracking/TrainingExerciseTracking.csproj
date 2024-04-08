@@ -27,4 +27,9 @@
       </Page>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\TrainingExerciseTracking.API\TrainingExerciseTracking.API.csproj" />
+      <ProjectReference Include="..\TrainingExerciseTracking.DataBase\TrainingExerciseTracking.DataBase.csproj" />
+    </ItemGroup>
+
 </Project>
