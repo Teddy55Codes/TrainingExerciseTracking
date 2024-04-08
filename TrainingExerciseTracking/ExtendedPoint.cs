@@ -4,6 +4,6 @@ namespace TrainingExerciseTracking;
 
 public class ExtendedPoint
 {
-    public int Id { get; set; }
+    public int ParticipantNumber { get; set; }
     public MPoint Point { get; set; }
 }

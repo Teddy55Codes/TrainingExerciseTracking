@@ -4,8 +4,10 @@ using Mapsui.Layers;
 using Mapsui.Projections;
 using Mapsui.Tiling;
 using Mapsui.UI.Wpf;
+using Mapsui.Widgets;
 using Prism.Events;
 using TestingTool.Ui;
+using TrainingExerciseTracking.Database;
 using TrainingExerciseTracking.Database.Models;
 using TrainingExerciseTracking.Services;
 
@@ -51,12 +53,12 @@ public class MainWindowViewModel : BaseViewModel
         
         for (int j = 0; j < currentMovements.Count; j++)
         {
-            var curr = _extendedPoints.SingleOrDefault(exp => exp.Id == currentMovements[j].Participant.Number);
+            var curr = _extendedPoints.SingleOrDefault(exp => exp.ParticipantNumber == currentMovements[j].Participant.Number);
             if (curr == null)
             {
                 _extendedPoints.Add(new ExtendedPoint()
                 {
-                    Id = currentMovements[j].Participant.Number, 
+                    ParticipantNumber = currentMovements[j].Participant.Number, 
                     Point = new MPoint(currentMovements[j].Longitude, currentMovements[j].Latitude)
                 });
             }
@@ -75,13 +77,21 @@ public class MainWindowViewModel : BaseViewModel
         var radius = e.MapInfo.WorldPosition.MRect.Centroid.MRect.Grow(e.MapInfo.Resolution*10);
         foreach (var exp in _extendedPoints)
         {
-            if (radius.Contains(exp.Point))
+            var expRadius = SphericalMercator.FromLonLat(exp.Point.X, exp.Point.Y);
+            if (radius.Contains(new MPoint(expRadius.x, expRadius.y)))  
             {
-                _textBox.Text = $"Participant clicked: {exp.Id}";
+                using (var db = new TrainingDbContext())
+                {
+                    var participant = db.Participants.First(p => p.Number == exp.ParticipantNumber);
+                    
+                    _textBox.Text = $"Number: {participant.Number} | Country: {participant.Country} | Rank: {participant.Rank} | Longitude: {exp.Point.X} | Latitude: {exp.Point.Y} | Information: {participant.Information}";
+                }
+                
                 _mapControl.Refresh();
                 return;
             }
         }
+        _textBox.Text = String.Empty;
     }
     
     private void InitializeMap()
@@ -91,10 +101,11 @@ public class MainWindowViewModel : BaseViewModel
             CRS = "EPSG:3857",
         };
         _mapControl.Map.Layers.Add(OpenStreetMap.CreateTileLayer());
-        _textBox.HorizontalAlignment = Mapsui.Widgets.HorizontalAlignment.Left;
-        _textBox.VerticalAlignment = Mapsui.Widgets.VerticalAlignment.Top;
-        _mapControl.Map.Widgets.Add(_textBox);
         
+        _textBox.HorizontalAlignment = HorizontalAlignment.Left;
+        _textBox.VerticalAlignment = VerticalAlignment.Top;
+        _mapControl.Map.Widgets.Add(_textBox);
+
         // Initialize and add the icon layer
         _iconLayer = new WritableLayer();
         _mapControl.Map.Layers.Add(_iconLayer);
