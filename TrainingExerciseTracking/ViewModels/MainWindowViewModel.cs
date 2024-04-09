@@ -34,41 +34,25 @@ public class MainWindowViewModel : BaseViewModel
         _participantMovementService.OnBatchCollected += UpdateParticipants;
     }
 
-    private void UpdateParticipants(Movement[] movements)
+    private void UpdateParticipants(List<Movement> movements)
     {
-        var currentMovements = new List<Movement>();
-        var i = 0;
-        while (!_participantMovementService.Movements.IsEmpty && i < 500)
-        {
-            Task.Run(() =>
-            {
-                Movement item;
-                if (_participantMovementService.Movements.TryTake(out var movement))
-                {
-                    currentMovements.Add(movement);
-                }
-            }).Wait();
-            i++;
-        }
-        if (currentMovements.Count == 0) return;
-        
         lock (_lockPoints)
         {
-            for (int j = 0; j < currentMovements.Count; j++)
+            for (int j = 0; j < movements.Count; j++)
             {
-                var curr = _extendedPoints.SingleOrDefault(exp => exp.ParticipantNumber == currentMovements[j].Participant.Number);
+                var curr = _extendedPoints.SingleOrDefault(exp => exp.ParticipantNumber == movements[j].Participant.Number);
                 if (curr == null)
                 {
                     _extendedPoints.Add(new ExtendedPoint()
                     {
-                        ParticipantNumber = currentMovements[j].Participant.Number, 
-                        Point = new MPoint(currentMovements[j].Longitude, currentMovements[j].Latitude)
+                        ParticipantNumber = movements[j].Participant.Number, 
+                        Point = new MPoint(movements[j].Longitude, movements[j].Latitude)
                     });
                 }
                 else
                 {
-                    curr.Point.X = currentMovements[j].Longitude;
-                    curr.Point.Y = currentMovements[j].Latitude;
+                    curr.Point.X = movements[j].Longitude;
+                    curr.Point.Y = movements[j].Latitude;
                 }
             }
         }

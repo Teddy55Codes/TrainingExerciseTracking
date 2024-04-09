@@ -27,14 +27,14 @@ public partial class App : PrismApplication
         using var db = new TrainingDbContext();
         db.Database.Migrate();
         
-        if (args.Any(arg => arg is "--sample-data" or "-s"))
+        Task.Run(() =>
         {
-            Task.Run(() =>
+            Container.Resolve<IParticipantMovementRecorder>();
+            if (args.Any(arg => arg is "--sample-data" or "-s"))
             {
-                Container.Resolve<IParticipantMovementRecorder>();
                 Container.Resolve<IParticipantActivityGenerator>().Start();
-            });
-        }
+            }
+        });
     }
     
     protected override void OnStartup(StartupEventArgs e)
