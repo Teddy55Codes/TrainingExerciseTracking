@@ -18,7 +18,8 @@ public class MainWindowViewModel : BaseViewModel
     private readonly IEventAggregator _eventAggregator;
     private readonly IParticipantMovementService _participantMovementService;
     private readonly MapControl _mapControl;
-    
+
+    private object _lockPoints = new();
     private WritableLayer _iconLayer;
     private List<ExtendedPoint> _extendedPoints = new();
     private Mapsui.Widgets.TextBox _textBox = new();
@@ -51,21 +52,24 @@ public class MainWindowViewModel : BaseViewModel
         }
         if (currentMovements.Count == 0) return;
         
-        for (int j = 0; j < currentMovements.Count; j++)
+        lock (_lockPoints)
         {
-            var curr = _extendedPoints.SingleOrDefault(exp => exp.ParticipantNumber == currentMovements[j].Participant.Number);
-            if (curr == null)
+            for (int j = 0; j < currentMovements.Count; j++)
             {
-                _extendedPoints.Add(new ExtendedPoint()
+                var curr = _extendedPoints.SingleOrDefault(exp => exp.ParticipantNumber == currentMovements[j].Participant.Number);
+                if (curr == null)
                 {
-                    ParticipantNumber = currentMovements[j].Participant.Number, 
-                    Point = new MPoint(currentMovements[j].Longitude, currentMovements[j].Latitude)
-                });
-            }
-            else
-            {
-                curr.Point.X = currentMovements[j].Longitude;
-                curr.Point.Y = currentMovements[j].Latitude;
+                    _extendedPoints.Add(new ExtendedPoint()
+                    {
+                        ParticipantNumber = currentMovements[j].Participant.Number, 
+                        Point = new MPoint(currentMovements[j].Longitude, currentMovements[j].Latitude)
+                    });
+                }
+                else
+                {
+                    curr.Point.X = currentMovements[j].Longitude;
+                    curr.Point.Y = currentMovements[j].Latitude;
+                }
             }
         }
 
