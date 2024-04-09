@@ -35,7 +35,7 @@ public class ApiHost
                             if (movementDTO is not { ParticipantNumber: { } number, Latitude: { } lat , Longitude: { } lon }) return Results.BadRequest("movement not valid.");
                             
                             await using var db = new TrainingDbContext();
-                            Participant? participant = db.Participants.Where(p => p.Number == number).FirstOrDefault();
+                            Participant? participant = db.Participants.FirstOrDefault(p => p.Number == number);
                             if (participant == null) return Results.BadRequest($"Participant with number {number} doesn't exist.");
                             
                             OnAPIAddedMovement?.Invoke(new Movement()
