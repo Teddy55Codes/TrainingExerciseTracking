@@ -26,6 +26,7 @@ public class ParticipantMovementService : IParticipantMovementService
         if (DateTime.Now - _lastBatch > TimeSpan.FromMilliseconds(500))
         {
             OnBatchCollected?.Invoke(Movements.ToArray());
+            _lastBatch = DateTime.Now;
         }
     }
 }
