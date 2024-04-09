@@ -1,12 +1,11 @@
-﻿using System.Configuration;
-using System.Data;
-using System.Windows;
+﻿using System.Windows;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Prism.Events;
 using Prism.Ioc;
 using Prism.Unity;
 using TrainingExerciseTracking.API;
-using TrainingExerciseTracking.Database.Models;
+using TrainingExerciseTracking.Database;
 using TrainingExerciseTracking.Services;
 
 namespace TrainingExerciseTracking;
@@ -19,15 +18,23 @@ public partial class App : PrismApplication
     /// <inheritdoc />
     protected override void RegisterTypes(IContainerRegistry containerRegistry)
     {
-        containerRegistry.Register<MainWindow>();
+        var args = Environment.GetCommandLineArgs().Select(arg => arg.ToLower());
         containerRegistry.RegisterSingleton<IParticipantMovementService, ParticipantMovementService>();
         containerRegistry.RegisterSingleton<IParticipantActivityGenerator, ParticipantActivityGenerator>();
         containerRegistry.RegisterSingleton<IParticipantMovementRecorder, ParticipantMovementRecorder>();
-        Task.Run(() =>
+        
+        // run database migrations
+        using var db = new TrainingDbContext();
+        db.Database.Migrate();
+        
+        if (args.Any(arg => arg is "--sample-data" or "-s"))
         {
-            Container.Resolve<IParticipantMovementRecorder>();
-            Container.Resolve<IParticipantActivityGenerator>().Start();
-        });
+            Task.Run(() =>
+            {
+                Container.Resolve<IParticipantMovementRecorder>();
+                Container.Resolve<IParticipantActivityGenerator>().Start();
+            });
+        }
     }
     
     protected override void OnStartup(StartupEventArgs e)
