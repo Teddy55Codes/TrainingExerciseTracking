@@ -13,6 +13,14 @@ public class ApiHost
     
     public static IHostBuilder CreateHostBuilder(string[] args) =>
         Host.CreateDefaultBuilder(args)
+#if RELEASE            
+            .ConfigureLogging(logging =>
+            {
+                // disable logging to console for performance reasons
+                logging.ClearProviders();
+                // TODO: add a logger
+            })
+#endif            
             .ConfigureWebHostDefaults(webBuilder =>
             {
                 webBuilder.Configure(app =>
@@ -27,17 +35,20 @@ public class ApiHost
                             if (movementDTO is not { ParticipantNumber: { } number, Latitude: { } lat , Longitude: { } lon }) return Results.BadRequest("movement not valid.");
                             
                             await using var db = new TrainingDbContext();
-                            var participant = db.Participants.FirstOrDefault(p => p.Number == number);
+                            Participant? participant = db.Participants.Where(p => p.Number == number).FirstOrDefault();
                             if (participant == null) return Results.BadRequest($"Participant with number {number} doesn't exist.");
-                                    
-                            var newMovement = db.Movements.Add(new Movement()
+                            
+                            OnAPIAddedMovement?.Invoke(new Movement()
                             {
-                                ParticipantId = participant.Id,
                                 Longitude = lon,
                                 Latitude = lat,
-                            }).Entity;
-                            await db.SaveChangesAsync();
-                            OnAPIAddedMovement?.Invoke(newMovement);
+                                ParticipantId = participant.Id,
+                                Participant = new Participant()
+                                {
+                                    Id = participant.Id,
+                                    Number = participant.Number
+                                }
+                            });
                             return Results.Created("Created new movement.", movementDTO);
                         });
                         
@@ -48,7 +59,7 @@ public class ApiHost
                             
                             await using var db = new TrainingDbContext();
                             var participant = db.Participants.FirstOrDefault(p => p.Number == number);
-                            if (participant != null) return Results.BadRequest($"Participant with number {number} already exists.");
+                            if (participant != null) return Results.Conflict($"Participant with number {number} already exists.");
                                     
                             db.Participants.Add(new Participant()
                             {
