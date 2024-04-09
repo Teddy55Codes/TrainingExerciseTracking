@@ -8,8 +8,6 @@ public class ParticipantMovementRecorder : IParticipantMovementRecorder
 {
     public ParticipantMovementRecorder(IParticipantMovementService participantMovementService)
     {
-        using var db = new TrainingDbContext();
-        db.Database.Migrate();
         participantMovementService.OnBatchCollected += SaveBadgeToDB;
     }
 
