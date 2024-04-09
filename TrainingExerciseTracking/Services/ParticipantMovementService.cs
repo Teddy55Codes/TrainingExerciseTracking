@@ -23,14 +23,15 @@ public class ParticipantMovementService : IParticipantMovementService
     private void CollectMovement(Movement movement)
     {
         _movements.Enqueue(movement);
-        if (DateTime.Now - _lastBatch <= TimeSpan.FromMilliseconds(500)) return;
+        if (_movements.Count < 1_000 && DateTime.Now - _lastBatch < TimeSpan.FromMilliseconds(500)) return;
         lock (_triggerEventLock)
         {
             // doing a sound check for requests that got queued up
-            if (DateTime.Now - _lastBatch <= TimeSpan.FromMilliseconds(500)) return;
+            if (_movements.Count < 1_000 && DateTime.Now - _lastBatch < TimeSpan.FromMilliseconds(500)) return;
+            Console.WriteLine(_movements.Count);
             var currentMovements = new List<Movement>();
             var i = 0;
-            while (!_movements.IsEmpty && i < 100)
+            while (!_movements.IsEmpty && i < 10_000)
             {
                 Movement item;
                 if (_movements.TryDequeue(out var mov))
