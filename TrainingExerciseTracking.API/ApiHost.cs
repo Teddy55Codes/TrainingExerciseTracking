@@ -9,6 +9,7 @@ public delegate void APIAddedMovement(Movement movement);
 
 public class ApiHost
 {
+    private static ConcurrentDictionary<int, int> _participantNumberCache = new ConcurrentDictionary<int, int>();
     public static event APIAddedMovement OnAPIAddedMovement;
     
     public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -32,21 +33,31 @@ public class ApiHost
                         endpoints.MapPost("/Movements", async (MovementDTO movementDTO, HttpContext httpContext) =>
                         {
                             if (!httpContext.Request.HasJsonContentType()) return Results.BadRequest("Content type must be application/json.");
-                            if (movementDTO is not { ParticipantNumber: { } number, Latitude: { } lat , Longitude: { } lon }) return Results.BadRequest("movement not valid.");
-                            
-                            await using var db = new TrainingDbContext();
-                            Participant? participant = db.Participants.FirstOrDefault(p => p.Number == number);
-                            if (participant == null) return Results.BadRequest($"Participant with number {number} doesn't exist.");
+                            if (movementDTO is not { ParticipantNumber: { } number, Latitude: { } lat and >= -90 and <= 90, Longitude: { } lon and >= -180 and <= 180 }) return Results.BadRequest("movement not valid.");
+
+                            (int, int) participantIdAndNumber;
+                            if (!_participantNumberCache.Keys.Contains(number))
+                            {
+                                await using var db = new TrainingDbContext();
+                                var participant = db.Participants.FirstOrDefault(p => p.Number == number);
+                                if (participant == null) return Results.BadRequest($"Participant with number {number} doesn't exist.");
+                                _participantNumberCache.TryAdd(participant.Number, participant.Id);
+                                participantIdAndNumber = (participant.Number, participant.Id);
+                            }
+                            else
+                            {
+                                participantIdAndNumber = (number, _participantNumberCache[number]);
+                            }
                             
                             OnAPIAddedMovement?.Invoke(new Movement()
                             {
                                 Longitude = lon,
                                 Latitude = lat,
-                                ParticipantId = participant.Id,
+                                ParticipantId = participantIdAndNumber.Item2,
                                 Participant = new Participant()
                                 {
-                                    Id = participant.Id,
-                                    Number = participant.Number
+                                    Id = participantIdAndNumber.Item2,
+                                    Number = participantIdAndNumber.Item1
                                 }
                             });
                             return Results.Created("Created new movement.", movementDTO);
